@@ -84,6 +84,38 @@ const FORMS = {
   ] },
 };
 
+
+const DB_TABLES = {
+  clients: 'nexo_clients',
+  services: 'nexo_services',
+  expenses: 'nexo_expenses',
+  employees: 'nexo_employees',
+  employeePayments: 'nexo_employee_payments',
+  quotes: 'nexo_quotes',
+  catalog: 'nexo_catalog',
+  vehicles: 'nexo_vehicles',
+};
+
+function fromDatabaseRow(row) {
+  const { created_at, updated_at, user_id, ...fields } = row;
+  return { ...fields, createdAt: created_at || '' };
+}
+
+function toDatabasePayload(formData) {
+  const payload = {};
+  for (const [key, rawValue] of Object.entries(formData)) {
+    if (key === 'id' || key === 'createdAt' || key === 'updated_at' || key === 'user_id') continue;
+    if (rawValue === '' || rawValue === undefined) {
+      payload[key] = null;
+    } else if (['valor', 'comissao'].includes(key)) {
+      payload[key] = Number(rawValue);
+    } else {
+      payload[key] = rawValue;
+    }
+  }
+  return payload;
+}
+
 const ICON_CONTENT = {
   dashboard: <><rect x="3.5" y="3.5" width="7" height="7" rx="1.4"/><rect x="13.5" y="3.5" width="7" height="4.5" rx="1.4"/><rect x="13.5" y="10" width="7" height="10.5" rx="1.4"/><rect x="3.5" y="13" width="7" height="7.5" rx="1.4"/></>,
   users: <><path d="M16 20v-1.5a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4V20"/><circle cx="10" cy="7.5" r="3.5"/><path d="M16.5 4.3a3.5 3.5 0 0 1 0 6.8M20 20v-1.5a4 4 0 0 0-2.8-3.8"/></>,
@@ -284,6 +316,17 @@ export default function App() {
     }
   }
 
+  async function loadRecordsFromDatabase() {
+    if (!supabase) return;
+    const loaded = {};
+    for (const [list, table] of Object.entries(DB_TABLES)) {
+      const { data, error } = await supabase.from(table).select('*').order('created_at', { ascending: false });
+      if (error) throw new Error(`Não foi possível carregar ${list}: ${error.message}`);
+      loaded[list] = (data || []).map(fromDatabaseRow);
+    }
+    setRecords((current) => ({ ...current, ...loaded }));
+  }
+
   async function handleAuthenticated(user) {
     setAuthUser(user);
     if (user?.user_metadata?.company_name) setCompany((current) => ({ ...current, name: user.user_metadata.company_name }));
@@ -293,8 +336,14 @@ export default function App() {
     setDatabaseStatus('checking');
     const status = await checkDatabaseAccess();
     setDatabaseStatus(status);
-    if (status === 'connected') notify('Login confirmado e acesso ao banco de teste validado.');
-    else if (status === 'needs-sql') notify('Login confirmado. Falta aplicar a migração SQL de teste para validar o banco.');
+    if (status === 'connected') {
+      try {
+        await loadRecordsFromDatabase();
+        notify('Login confirmado. Dados carregados do banco de dados.');
+      } catch (error) {
+        notify(error.message || 'Não foi possível carregar os dados do banco.');
+      }
+    } else if (status === 'needs-sql') notify('Login confirmado. Falta validar o acesso às tabelas do banco.');
   }
 
   async function handleSignOut() {
@@ -304,6 +353,7 @@ export default function App() {
     }
     setAuthUser(null);
     setAuthMode('demo');
+    setRecords({ clients: [], services: [], expenses: [], employees: [], employeePayments: [], quotes: [], catalog: [], vehicles: [] });
     setDatabaseStatus(isSupabaseConfigured ? 'not-checked' : 'not-configured');
     setScreen('login');
   }
@@ -333,7 +383,13 @@ export default function App() {
         if (data.session.user?.user_metadata?.company_name) setCompany((current) => ({ ...current, name: data.session.user.user_metadata.company_name }));
         setAuthMode('authenticated');
         setScreen('app');
-        setDatabaseStatus(await checkDatabaseAccess());
+        const status = await checkDatabaseAccess();
+        if (!alive) return;
+        setDatabaseStatus(status);
+        if (status === 'connected') {
+          try { await loadRecordsFromDatabase(); }
+          catch (loadError) { if (alive) notify(loadError.message || 'Não foi possível carregar os dados do banco.'); }
+        }
       } else {
         setScreen('login');
         setDatabaseStatus('not-checked');
@@ -384,14 +440,30 @@ export default function App() {
     setFormData({ data: todayISO(), ...(type==='service'?{pagamento:'Pendente'}:{}), ...(type==='expense'?{categoria:'Produtos',pagamento:'PIX'}:{}), ...(type==='client'||type==='employee'?{status:'Ativo'}:{}), ...(type==='quote'?{situacao:'Em elaboração'}:{}), ...(type==='employeePayment'?{metodo:'PIX'}:{}) });
     setMobileMenuOpen(false);
   }
-  function submitRecord(event) {
+  async function submitRecord(event) {
     event.preventDefault();
-    const schema=FORMS[modalType];
+    const schema = FORMS[modalType];
     if (!schema) return;
-    const next={ id: makeId(), createdAt: todayISO(), ...formData };
-    setRecords((current)=>({...current,[schema.list]:[next,...current[schema.list]]}));
-    const title=schema.title;
-    setModalType(''); setFormData({}); notify(`${title}: registro incluído nesta sessão.`);
+    const title = schema.title;
+
+    if (authMode === 'authenticated' && supabase) {
+      const table = DB_TABLES[schema.list];
+      if (!table) { notify('Este tipo de cadastro ainda não está conectado ao banco.'); return; }
+      const payload = toDatabasePayload(formData);
+      const { data, error } = await supabase.from(table).insert(payload).select('*').single();
+      if (error) {
+        notify(`Não foi possível salvar ${title.toLowerCase()}: ${error.message}`);
+        return;
+      }
+      const saved = fromDatabaseRow(data);
+      setRecords((current) => ({ ...current, [schema.list]: [saved, ...current[schema.list]] }));
+      setModalType(''); setFormData({}); notify(`${title}: salvo no banco de dados.`);
+      return;
+    }
+
+    const next = { id: makeId(), createdAt: todayISO(), ...formData };
+    setRecords((current) => ({ ...current, [schema.list]: [next, ...current[schema.list]] }));
+    setModalType(''); setFormData({}); notify(`${title}: registro incluído apenas na demonstração local.`);
   }
   function changeMonth(delta) { setMonth(current=>new Date(current.getFullYear(),current.getMonth()+delta,1)); }
   function downloadFile(filename, contents, mimeType) {
