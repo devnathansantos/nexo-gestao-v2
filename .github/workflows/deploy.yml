@@ -1,57 +1,53 @@
-
-name: Deploy NEXO V2
-
+name: Publicar NEXO
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
   id-token: write
-
 concurrency:
-  group: pages
-  cancel-in-progress: true
-
+  group: nexo-pages
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build
-        run: npm run build
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run test:db
+      - name: Conferir configuração pública
         env:
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
-          VITE_BASE_PATH: /nexo-gestao-v2/
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        run: |
+          test -n "$VITE_SUPABASE_URL" || { echo 'Configure VITE_SUPABASE_URL nas variáveis do repositório.'; exit 1; }
+          test -n "$VITE_SUPABASE_PUBLISHABLE_KEY" || { echo 'Configure VITE_SUPABASE_PUBLISHABLE_KEY nas variáveis do repositório.'; exit 1; }
+          case "$VITE_SUPABASE_PUBLISHABLE_KEY" in sb_secret_*) echo 'Uma chave secreta não pode ser publicada.'; exit 1;; esac
+      - name: Compilar
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          repo_name="${GITHUB_REPOSITORY#*/}"
+          if [[ "$repo_name" == *.github.io ]]; then export VITE_BASE_PATH=/; else export VITE_BASE_PATH="/$repo_name/"; fi
+          npm run build
+      - run: npm run check:performance
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-
   deploy:
+    needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
-      - name: Deploy
+      - name: Publicar
         id: deployment
         uses: actions/deploy-pages@v4

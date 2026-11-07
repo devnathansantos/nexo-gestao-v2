@@ -1,0 +1,240 @@
+.quote-print-document {
+  display: none;
+}
+@media print {
+  @page {
+    size: A4;
+    margin: 17mm 15mm;
+  }
+  html,
+  body {
+    min-width: 0 !important;
+    margin: 0 !important;
+    background: #fff !important;
+    color: #172941 !important;
+  }
+  body:has(.quote-print-document) > :not(#root) {
+    display: none !important;
+  }
+  body:has(.quote-print-document)
+    #root
+    *:not(:has(.quote-print-document)):not(.quote-print-document):not(
+      .quote-print-document *
+    ) {
+    display: none !important;
+  }
+  body:has(.quote-print-document) #root,
+  body:has(.quote-print-document) #root *:has(.quote-print-document) {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: visible !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  body:has(.quote-print-document) .quote-print-document {
+    display: block;
+    position: static;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    font:
+      10pt/1.5 Arial,
+      sans-serif;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .quote-print-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 2px solid #176cf5;
+    padding-bottom: 22px;
+  }
+  .quote-print-brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+  .quote-print-brand img {
+    width: 43px;
+    height: 43px;
+  }
+  .quote-print-brand strong {
+    font-size: 22pt;
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+  .quote-print-brand span {
+    display: block;
+    font-size: 6pt;
+    color: #728198;
+    letter-spacing: 2px;
+    margin-top: 5px;
+  }
+  .quote-print-number {
+    text-align: right;
+  }
+  .quote-print-number > span {
+    font-size: 7pt;
+    color: #728198;
+    letter-spacing: 1px;
+  }
+  .quote-print-number > strong {
+    display: block;
+    font-size: 24pt;
+    font-weight: 600;
+    margin: 2px 0;
+  }
+  .quote-print-number small {
+    color: #728198;
+    font-size: 8pt;
+  }
+  .quote-print-company {
+    margin: 25px 0;
+  }
+  .quote-print-company > span {
+    font-size: 7pt;
+    color: #728198;
+    letter-spacing: 1px;
+  }
+  .quote-print-company h1 {
+    font-size: 20pt;
+    margin: 4px 0 6px;
+    line-height: 1.2;
+  }
+  .quote-print-company p {
+    color: #526680;
+    margin: 0;
+    font-size: 11pt;
+  }
+  .quote-print-parties {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 30px;
+    padding: 18px 0;
+    border-block: 1px solid #e4ebf4;
+    margin-bottom: 25px;
+  }
+  .quote-print-document h2 {
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #728198;
+    margin: 0 0 10px;
+  }
+  .quote-print-parties p {
+    font-size: 9pt;
+    margin: 4px 0;
+  }
+  .quote-print-parties > div:last-child p {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .quote-print-parties > div:last-child span {
+    color: #728198;
+  }
+  .quote-print-parties strong {
+    font-weight: 600;
+  }
+  .quote-print-table {
+    width: 100%;
+    border-collapse: collapse;
+    white-space: normal !important;
+    margin: 0;
+  }
+  .quote-print-table th {
+    padding: 10px 8px;
+    text-align: right;
+    background: #f3f7fc;
+    color: #728198;
+    border-block: 1px solid #e4ebf4;
+    font-size: 7.5pt;
+    text-transform: uppercase;
+  }
+  .quote-print-table th:first-child,
+  .quote-print-table td:first-child {
+    text-align: left;
+    width: 43%;
+    padding-left: 0;
+  }
+  .quote-print-table td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #e4ebf4;
+    font-size: 9pt;
+    text-align: right;
+  }
+  .quote-print-table tr {
+    break-inside: avoid;
+  }
+  .quote-print-table thead {
+    display: table-header-group;
+  }
+  .quote-print-totals {
+    width: 55%;
+    margin: 18px 0 26px auto;
+    break-inside: avoid;
+  }
+  .quote-print-totals p {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin: 8px 0;
+    color: #728198;
+    font-size: 10pt;
+  }
+  .quote-print-totals strong {
+    color: #172941;
+    font-weight: 600;
+  }
+  .quote-print-totals p.quote-print-grand-total {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e4ebf4;
+    font-size: 13pt;
+    color: #176cf5;
+  }
+  .quote-print-grand-total strong {
+    color: #176cf5;
+  }
+  .quote-print-notes {
+    break-inside: avoid;
+    margin: 24px 0;
+  }
+  .quote-print-notes p {
+    white-space: pre-wrap;
+    color: #526680;
+    font-size: 9pt;
+    line-height: 1.7;
+    margin: 0;
+  }
+  .quote-print-footer {
+    margin-top: 35px;
+    padding-top: 15px;
+    border-top: 1px solid #e4ebf4;
+    text-align: center;
+    font-size: 7pt;
+    line-height: 1.8;
+    color: #728198;
+    break-inside: avoid;
+  }
+}
+
+@media print {
+  .quote-print-brand img.nexo-original-logo {
+    width: 68px;
+    height: 68px;
+    object-fit: contain;
+  }
+}

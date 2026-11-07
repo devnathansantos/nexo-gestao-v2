@@ -1,0 +1,231 @@
+.device-lock {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(ellipse at 12% 0%, #dcecff, transparent 58%), #f3f7fc;
+  overflow: auto;
+}
+.device-lock-card {
+  width: min(100%, 440px);
+  padding: 34px;
+  background: #fff;
+  border: 1px solid #e4ebf4;
+  border-radius: 22px;
+  box-shadow: 0 20px 75px #1738580b;
+  text-align: center;
+}
+.device-lock-symbol {
+  display: grid;
+  place-items: center;
+  width: 57px;
+  height: 57px;
+  margin: 0 auto 22px;
+  color: #176cf5;
+  background: #eaf2ff;
+  border-radius: 16px;
+}
+.device-lock-symbol svg {
+  width: 28px;
+  height: 28px;
+}
+.device-lock-eyebrow {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  color: #728198;
+}
+.device-lock h1 {
+  margin: 12px 0;
+  color: #172941;
+  font-size: 25px;
+  line-height: 1.25;
+  letter-spacing: -0.7px;
+}
+.device-lock-card > p {
+  color: #728198;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.device-lock form {
+  margin-top: 23px;
+}
+.device-lock label,
+.device-pin-fields label {
+  display: grid;
+  gap: 8px;
+  text-align: left;
+  color: #42556e;
+  font-size: 12px;
+  font-weight: 600;
+}
+.device-pin-input {
+  display: block;
+  width: 100%;
+  margin: 8px 0 13px;
+  min-height: 54px;
+  border: 1px solid #dce5f0;
+  border-radius: 11px;
+  text-align: center;
+  letter-spacing: 10px;
+  font-size: 24px;
+  padding: 7px 15px 7px 25px;
+  background: #fbfcfe;
+  color: #172941;
+}
+.device-pin-input:focus,
+.device-pin-fields input:focus {
+  outline: 3px solid #176cf51c;
+  border-color: #6c9eea;
+}
+.device-pin-primary,
+.device-pin-secondary {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 43px;
+  padding: 10px 15px;
+  border: 1px solid #176cf5;
+  border-radius: 9px;
+  background: #176cf5;
+  color: white;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.device-pin-secondary {
+  color: #415b7b;
+  border-color: #dce5f0;
+  background: white;
+}
+.device-lock .device-pin-primary {
+  width: 100%;
+}
+.device-pin-primary:disabled,
+.device-pin-secondary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.device-pin-note {
+  color: #7b8aa0;
+  font-size: 11px;
+  line-height: 1.65;
+  margin: 16px 0;
+}
+.device-lock-card .device-pin-note {
+  font-size: 11px;
+  margin-top: 20px;
+}
+.device-pin-error {
+  border: 1px solid #f2d5d8;
+  background: #fff6f6;
+  border-radius: 9px;
+  color: #ad3744;
+  padding: 11px 13px;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: left;
+}
+.device-pin-success {
+  color: #177454;
+  background: #edf8f2;
+  border: 1px solid #d1eddd;
+  border-radius: 9px;
+  padding: 11px 13px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.device-lock-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 17px;
+  margin-top: 17px;
+}
+.device-lock-links button {
+  border: 0;
+  background: none;
+  color: #176cf5;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.device-pin-settings {
+  color: #172941;
+}
+.device-pin-settings-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+.device-pin-settings h3 {
+  margin: 0;
+  font-size: 15px;
+}
+.device-pin-settings-head p {
+  color: #728198;
+  margin: 7px 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.device-pin-badge {
+  color: #7b8aa0;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 5px 8px;
+  background: #f0f4fa;
+  border-radius: 6px;
+}
+.device-pin-badge.enabled {
+  color: #198262;
+  background: #eaf8f2;
+}
+.device-pin-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+  margin-top: 22px;
+}
+.device-pin-fields input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 9px 13px;
+  border: 1px solid #dce5f0;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 16px;
+  letter-spacing: 5px;
+  color: #172941;
+  background: #fbfcfe;
+}
+.device-pin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 17px;
+}
+@media (max-width: 600px) {
+  .device-lock {
+    padding: 18px;
+  }
+  .device-lock-card {
+    padding: 29px 23px;
+  }
+  .device-lock h1 {
+    font-size: 23px;
+  }
+  .device-pin-fields {
+    grid-template-columns: 1fr;
+  }
+  .device-pin-actions > button {
+    width: 100%;
+  }
+}
