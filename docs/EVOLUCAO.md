@@ -18,9 +18,9 @@ O original tem pacotes, serviços, despesas, funcionários, metas, histórico, r
 
 ## Integração que ainda depende do ambiente
 
-O MCP Supabase está cadastrado no CLI, mas não expõe ferramentas nesta conversa; a conexão a `mcp.supabase.com` recebeu bloqueio 403 do proxy da nuvem. Nenhuma alteração foi aplicada ao projeto remoto. O acesso desta tarefa em nuvem não é equivalente ao acesso do Codex instalado no computador do proprietário.
+O MCP Supabase está cadastrado no CLI, mas não expõe ferramentas nesta conversa; a conexão a `mcp.supabase.com` recebeu bloqueio 403 do proxy da nuvem. O proprietário confirmou posteriormente a aplicação das três migrações pelo Codex do terminal; o registro está em [PUBLICAR-E-HOMOLOGAR.md](PUBLICAR-E-HOMOLOGAR.md). O acesso desta tarefa em nuvem não é equivalente ao acesso do Codex instalado no computador do proprietário.
 
-É necessário disponibilizar o MCP autenticado nesta sessão e liberar os domínios do Supabase no ambiente. Depois: inspecionar tabelas/políticas/migrações existentes, reconciliar as migrações sem apagar dados, configurar Auth/SMTP e URLs, validar duas empresas e só então homologar o site publicado. Não publicar uma tela como integrada apenas porque os testes locais passaram.
+As próximas tarefas são configurar Auth/SMTP gratuito e URLs, ligar o frontend e homologar duas empresas. O MCP do terminal já permite continuar; disponibilizá-lo nesta sessão em nuvem é uma alternativa, não uma exigência para prosseguir. Não publicar uma tela como integrada apenas porque os testes locais passaram.
 
 O repositório alvo é exclusivamente `devnathansantos/nexo-gestao-v2`. Há alterações remotas na `main` posteriores à base `backup`; a entrega deve ir para uma branch própria, sem sobrescrever essa história nem o repositório original.
 

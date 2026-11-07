@@ -79,8 +79,8 @@ O script cria um banco em memória, aplica cada migração duas vezes na ordem c
 
 Contas Auth que já existiam antes da migração não recebem uma empresa automaticamente. Uma importação dessas contas e de dados antigos precisa de um plano aprovado. O trigger de cadastro também afeta novos usuários criados pelo painel/admin, portanto esses cadastros precisam fornecer o nome da empresa.
 
-Esta entrega ainda não cria financeiro, movimentações de estoque, compras, restauração de backups nem auditoria por funcionário. Um produto no catálogo não representa um saldo de estoque. Com uma conta compartilhada, o banco identifica a conta da empresa, não qual pessoa digitou uma alteração.
+A terceira migração acrescenta o financeiro. Movimentações de estoque, compras, restauração de backups e auditoria por funcionário continuam pendentes. Um produto no catálogo não representa um saldo de estoque. Com uma conta compartilhada, o banco identifica a conta da empresa, não qual pessoa digitou uma alteração.
 
 ## Terceira etapa: financeiro e retorno de clientes
 
-Depois das duas primeiras migrações, aplique `202611050001_finance.sql` para habilitar operações, pagamentos, indicadores, retorno de clientes e snapshot JSON v3. Em um banco existente, revise o esquema e o histórico antes de aplicar. Não reaplique uma migração anterior isoladamente: ela pode reduzir o escopo da função de exportação. Leia [FINANCEIRO.md](FINANCEIRO.md) para tabelas, RPCs, permissões, cálculos e limites. A aplicação no Supabase remoto continua pendente de conexão neste ambiente.
+Depois das duas primeiras migrações, aplique `202611050001_finance.sql` para habilitar operações, pagamentos, indicadores, retorno de clientes e snapshot JSON v3. Em um banco existente, revise o esquema e o histórico antes de aplicar. Não reaplique uma migração anterior isoladamente: ela pode reduzir o escopo da função de exportação. Leia [FINANCEIRO.md](FINANCEIRO.md) para tabelas, RPCs, permissões, cálculos e limites. O proprietário confirmou a aplicação remota pelo MCP do terminal. Consulte [Publicar e homologar](../docs/PUBLICAR-E-HOMOLOGAR.md) para o histórico registrado e a configuração gratuita de e-mails.

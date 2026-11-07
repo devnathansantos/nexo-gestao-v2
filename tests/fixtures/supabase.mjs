@@ -1,5 +1,5 @@
 import { createFinanceFixture } from "./finance.mjs";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 
 // This is deliberately a browser/API fixture, not a substitute for database RLS tests.
 export const fixtureOrigin = "https://nexo-fixture.supabase.co";
@@ -145,6 +145,9 @@ export function createSupabaseFixture() {
   };
 
   const finance = createFinanceFixture({ customers, quotes, companies });
+  const passwords = new Map();
+  let recoveryRequest = null;
+  let recoveryUsed = false;
 
   async function route(route) {
     const request = route.request();
@@ -168,6 +171,27 @@ export function createSupabaseFixture() {
     const body = request.postDataJSON();
     calls.push({ method, path: url.pathname, search: url.search, body });
     if (url.pathname === "/auth/v1/token") {
+      if (url.searchParams.get("grant_type") === "pkce") {
+        const challenge = createHash("sha256")
+          .update(body.code_verifier || "")
+          .digest("base64url");
+        if (
+          body.auth_code !== "fixture-recovery-code" ||
+          recoveryUsed ||
+          !recoveryRequest ||
+          challenge !== recoveryRequest.challenge
+        )
+          return respond(
+            {
+              code: "bad_code_verifier",
+              msg: "Invalid or expired recovery link",
+            },
+            400,
+          );
+        recoveryUsed = true;
+        return respond(sessionFor(recoveryRequest.user));
+      }
+
       const user =
         url.searchParams.get("grant_type") === "refresh_token"
           ? users.find(
@@ -175,7 +199,8 @@ export function createSupabaseFixture() {
             )
           : users.find(
               (item) =>
-                item.email === body.email && body.password === fixturePassword,
+                item.email === body.email &&
+                body.password === (passwords.get(item.id) || fixturePassword),
             );
       if (!user)
         return respond(
@@ -191,10 +216,17 @@ export function createSupabaseFixture() {
     if (url.pathname === "/auth/v1/user") {
       const user = userFromRequest(request);
       if (!user) return respond({ code: "bad_jwt", msg: "Invalid user" }, 401);
+      if (method === "PUT" && body.password)
+        passwords.set(user.id, body.password);
       return respond({ user: userResponse(user) });
     }
     if (url.pathname === "/auth/v1/logout") return respond(null, 204);
-    if (url.pathname === "/auth/v1/recover") return respond({});
+    if (url.pathname === "/auth/v1/recover") {
+      const user = users.find((user) => user.email === body.email);
+      recoveryRequest = user ? { user, challenge: body.code_challenge } : null;
+      recoveryUsed = false;
+      return respond({});
+    }
     if (url.pathname === "/auth/v1/signup") {
       const user = {
         id: randomUUID(),

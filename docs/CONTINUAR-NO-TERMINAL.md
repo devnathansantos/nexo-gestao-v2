@@ -5,7 +5,11 @@ Branch de entrega: `codex/nexo-v2-finance`. Versão: `0.3.0`.
 Supabase autorizado: `sgytnlhqmbaljrrzufcc`.
 O repositório `devnathansantos/nexo-gestao` permanece exclusivamente como referência, sem alterações.
 
-## Situação verificada
+## Atualização: backend já implantado
+
+O proprietário confirmou a aplicação das três migrações no projeto real, com versões `20261107142857`, `20261107143007` e `20261107143020`. **Não reaplicar o passo 5 abaixo.** O procedimento inicial foi concluído. Continue por [PUBLICAR-E-HOMOLOGAR.md](PUBLICAR-E-HOMOLOGAR.md), que registra o resultado, o envio gratuito de e-mails e a configuração do frontend.
+
+## Situação inicial verificada (histórico)
 
 Em 7 de novembro de 2026, o proprietário trouxe o resultado da inspeção do MCP feita no terminal: projeto confirmado, schema `public` sem tabelas e lista de migrações vazia. Isso é evidência do acesso pelo terminal; o MCP não foi disponibilizado à sessão em nuvem. Nenhuma migração remota foi aplicada por esta sessão.
 
@@ -18,7 +22,6 @@ As sete tabelas públicas esperadas após as três migrações são `companies`,
 3. Use Node.js 22.12+ e execute `npm ci`, `npm test`, `npm run test:db` e `npm run build`. Os testes de banco usam PGlite descartável, sem conectar ao Supabase real. Se executar a suíte visual, instale Chromium e use `npm run test:browser`.
 4. Pelo MCP autenticado, confirme novamente o projeto `sgytnlhqmbaljrrzufcc`, as tabelas públicas e as migrações. Se surgiram tabelas ou migrações desde a inspeção, compare antes de aplicar; não apague dados nem reconstrua o banco.
 5. A implantação do backend já foi autorizada pelo proprietário. Se a inspeção confirmar o estado esperado, aplique o conteúdo exato dos arquivos abaixo usando a ferramenta de migração do MCP, na ordem indicada. Não execute `supabase/tests/bootstrap.sql` ou as suítes SQL no projeto real.
-
    1. `supabase/migrations/202611030001_company_customers.sql`
    2. `supabase/migrations/202611040001_catalog_quotes.sql`
    3. `supabase/migrations/202611050001_finance.sql`

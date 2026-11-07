@@ -1545,6 +1545,71 @@ try {
     await assertNoOverflow();
   });
 
+  await test("Recovery exchanges a PKCE code, changes the password and accepts only the new password", async () => {
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await page.goto(origin);
+    await page
+      .getByRole("button", { name: "Esqueceu a senha?", exact: true })
+      .click();
+    await page
+      .getByLabel("E-mail da empresa", { exact: true })
+      .fill(fixture.users[0].email);
+    await page
+      .getByRole("button", { name: "Enviar link de recuperação", exact: true })
+      .click();
+    await expect(page.getByRole("status")).toContainText(
+      "Se este e-mail estiver cadastrado",
+    );
+    await page.goto(
+      `${origin}/?code=fixture-recovery-code&flow=recovery#/recuperar`,
+    );
+    await expect(
+      page.getByRole("heading", { name: "Escolha uma nova senha." }),
+    ).toBeVisible();
+    await page
+      .getByLabel("Crie sua senha", { exact: true })
+      .fill("Nova-senha-2026!");
+    await page
+      .getByLabel("Confirme sua senha", { exact: true })
+      .fill("Nova-senha-2026!");
+    await page
+      .getByRole("button", { name: "Salvar nova senha", exact: true })
+      .click();
+    await expect(
+      page.getByRole("heading", { name: "Uma visão clara de tudo." }),
+    ).toBeVisible();
+    assert.ok(!new URL(page.url()).searchParams.has("flow"));
+    await page
+      .locator(".sidebar")
+      .getByRole("button", { name: "Sair da conta", exact: true })
+      .click();
+    await login();
+    await expect(page.getByRole("alert")).toContainText(
+      "E-mail ou senha incorretos",
+    );
+    await login(fixture.users[0].email, "Nova-senha-2026!");
+    await expect(
+      page.getByRole("heading", { name: "Uma visão clara de tudo." }),
+    ).toBeVisible();
+    await page
+      .locator(".sidebar")
+      .getByRole("button", { name: "Sair da conta", exact: true })
+      .click();
+  });
+
+  await test("A reused recovery code without its verifier cannot open company data", async () => {
+    await page.goto(
+      `${origin}/?code=fixture-recovery-code&flow=recovery#/recuperar`,
+    );
+    await expect(
+      page.getByRole("heading", { name: "Bom ter você aqui." }),
+    ).toBeVisible();
+    await expect(page.locator(".app-shell")).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "Salvar nova senha", exact: true }),
+    ).toHaveCount(0);
+  });
+
   await test("No JavaScript page errors or unexpected external/API requests occurred", async () => {
     assert.deepEqual(pageErrors, []);
     assert.deepEqual(blockedExternal, []);

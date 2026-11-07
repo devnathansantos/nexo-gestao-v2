@@ -39,7 +39,7 @@ npm run dev
 
 Variáveis de front-end são públicas: nunca use senha do banco, chave `service_role` ou `sb_secret_*`. O cliente rejeita chaves privilegiadas. Sem configuração válida, a interface informa conexão pendente e mantém o cadastro/login desativados.
 
-Leia o [passo a passo do Supabase](supabase/README.md) antes de criar usuários. Em um projeto novo, aplique as migrações `202611030001_company_customers.sql`, `202611040001_catalog_quotes.sql` e `202611050001_finance.sql`, nessa ordem. Em um banco existente, confira o histórico e aplique somente as migrações pendentes. Elas preparam o cadastro automático da empresa, o isolamento e as operações transacionais de orçamento. Nenhuma migração foi aplicada em um projeto remoto nesta implementação.
+Leia o [passo a passo do Supabase](supabase/README.md) antes de criar usuários. Em um projeto novo, aplique as migrações `202611030001_company_customers.sql`, `202611040001_catalog_quotes.sql` e `202611050001_finance.sql`, nessa ordem. Em um banco existente, confira o histórico e aplique somente as migrações pendentes. Elas preparam o cadastro automático da empresa, o isolamento e as operações transacionais de orçamento. O proprietário confirmou a aplicação das três migrações pelo MCP do terminal. As versões registradas e o próximo procedimento estão em [Publicar e homologar](docs/PUBLICAR-E-HOMOLOGAR.md). Não reaplique as migrações já instaladas.
 
 ## Validação
 
