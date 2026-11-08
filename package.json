@@ -12,6 +12,7 @@
     "test:watch": "vitest",
     "test:db": "node supabase/tests/run-isolation.mjs",
     "test:browser": "node tests/browser.mjs",
+    "test:pages": "node tests/pages.mjs",
     "check:performance": "node tests/performance.mjs"
   },
   "dependencies": {

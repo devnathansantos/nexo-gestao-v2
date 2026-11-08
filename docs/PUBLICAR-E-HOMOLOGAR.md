@@ -47,7 +47,7 @@ Referências: [SMTP personalizado do Supabase](https://supabase.com/docs/guides/
 
 ## URLs de autenticação
 
-Endereço previsto do Pages, a confirmar na configuração do repositório:
+O proprietário escolheu usar o endereço gratuito, sem domínio próprio. Endereço previsto do Pages, a confirmar na configuração do repositório:
 `https://devnathansantos.github.io/nexo-gestao-v2/`.
 
 No Supabase → Authentication → URL Configuration, use esse endereço como **Site URL** e preserve URLs existentes legítimas. Cadastre estes retornos para a implantação padrão:
@@ -85,6 +85,14 @@ Os endereços correspondem à função `createAuthRedirectUrl` do código. Não 
 
 7. Acompanhe os logs de build/deploy. Se o environment `github-pages` permitir somente a branch padrão, acrescente especificamente a branch da entrega às branches autorizadas, preservando as demais proteções. Se houver aprovação de environment, siga o fluxo do GitHub.
 8. Confirme a URL efetivamente publicada, carregamento dos assets na subpasta e presença da configuração correta. Não divulgar como produto pronto antes da homologação. A API de configurações do GitHub está bloqueada para esta sessão em nuvem; envio de código por Git foi possível.
+
+### Estado da preparação do Pages — 8/11/2026
+
+A build de produção foi validada localmente em `/nexo-gestao-v2/`: seis verificações de navegador passaram com service worker ativo, incluindo recarregamento offline e recuperação de senha na subpasta. O JavaScript inicial ficou em 152,9 KiB gzip, dentro do limite de 160 KiB. O workflow de publicação agora exige essas verificações antes do envio do artefato. Nenhuma alteração no banco foi necessária.
+
+A tentativa de consultar a configuração do Pages por `gh api` recebeu `Forbidden` da rede deste ambiente. A configuração real, a execução do deploy e a URL publicada continuam sem confirmação. Foi salvo um rascunho de rede com `api.github.com` e `devnathansantos.github.io`, preservando os três endereços do Supabase. Para aplicar, revisar e salvar as configurações do ambiente e usar **Publish/Publicar**. O rascunho salvo não equivale a acesso liberado. Depois disso, conferir novamente a rede e a autenticação/permissões do GitHub antes de ativar Pages e executar o workflow.
+
+Como alternativa, o Codex do terminal pode executar o procedimento acima usando o GitHub CLI autenticado, sem alterar o repositório original. Publicar o site não configura automaticamente o SMTP nem os retornos do Supabase.
 
 ## Teste pessoal de e-mail solicitado ao proprietário
 

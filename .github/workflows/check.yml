@@ -19,5 +19,12 @@ jobs:
       - run: npm run test:db
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
-      - run: npm run build
+      - name: Compilar para a subpasta do Pages
+        env:
+          VITE_BASE_PATH: /nexo-gestao-v2/
+          VITE_SUPABASE_URL: https://sgytnlhqmbaljrrzufcc.supabase.co
+          # Only used in this check artifact; test:pages intercepts every API request.
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_pages_test_not_a_real_key
+        run: npm run build
       - run: npm run check:performance
+      - run: npm run test:pages

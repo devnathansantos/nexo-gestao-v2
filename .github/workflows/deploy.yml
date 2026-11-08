@@ -37,6 +37,10 @@ jobs:
           if [[ "$repo_name" == *.github.io ]]; then export VITE_BASE_PATH=/; else export VITE_BASE_PATH="/$repo_name/"; fi
           npm run build
       - run: npm run check:performance
+      - name: Preparar navegador de teste
+        run: npx --no-install playwright install --with-deps chromium
+      - name: Validar versão compilada para o Pages
+        run: npm run test:pages
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
